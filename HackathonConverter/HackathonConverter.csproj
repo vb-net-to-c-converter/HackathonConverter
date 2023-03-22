@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-HackathonConverter-18dde5a6-df6c-4b15-bcbd-5e7d6d1ab176</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+  	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
+  	<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HackathonConverter.Services\HackathonConverter.Services.csproj" />
+  </ItemGroup>
+
+</Project>
