@@ -1,11 +1,12 @@
-﻿{
+{
   "profiles": {
     "HackathonConverter": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
+      "commandLineArgs": "--path=C:\\ILSource\\HackathonConverter\\Speciment",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "local"
-      }
+      },
+      "dotnetRunMessages": true
     }
   }
 }

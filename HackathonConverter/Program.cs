@@ -1,6 +1,7 @@
 using HackathonConverter;
 using HackathonConverter.Services.Interfaces;
 using HackathonConverter.Services.Services;
+using ICopyProjectService = HackathonConverter.Services.Interfaces.ICopyProjectService;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
@@ -14,6 +15,7 @@ IHost host = Host.CreateDefaultBuilder(args)
             .AddSingleton<IArguments>(_=>new ArgumentsService(args))
             .AddHostedService<Worker>()
             // Add all services as Singletons bellow
+            .AddSingleton<ICopyProjectService,CopyProjectService>()
             ;
     })
     .Build();
