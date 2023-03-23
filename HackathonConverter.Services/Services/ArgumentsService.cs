@@ -16,6 +16,8 @@ public class ArgumentsService : IArguments
     {
         var split = argument.Split('=', StringSplitOptions.TrimEntries);
         if (split.Length != 2) throw new Exception($"Incorrect argument provided - {argument}");
-        return split[1];
+        var result = System.IO.Path.GetFullPath(split[1]);
+        
+        return result;
     }
 }

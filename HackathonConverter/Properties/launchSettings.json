@@ -2,7 +2,7 @@
   "profiles": {
     "HackathonConverter": {
       "commandName": "Project",
-      "commandLineArgs": "--path=somepath",
+      "commandLineArgs": "--path=..\\Speciment",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "local"
       },
