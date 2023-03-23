@@ -1,10 +1,13 @@
 using HackathonConverter.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace HackathonConverter.Services.Services;
 
-public class ProjectReaderService
+public class ProjectReaderService : IProjectReader
 {
     private readonly IArguments _arguments;
     private readonly string _FilePath;
@@ -17,9 +20,22 @@ public class ProjectReaderService
         _FilePath = arguments.Path.ToString();
     }
 
-    
+    public async Task ProcessAsync(CancellationToken stoppingToken)
+    {
+        // Check the cancellation token before starting the operation
+        stoppingToken.ThrowIfCancellationRequested();
 
-    public List<string> GetFiles()
+        List<string> files = await GetFiles();
+
+        foreach (string file in files)
+        {
+            //_logger.LogInformation("Filename: {filename}", file.ToString());
+            //todo: vikram tasks here?
+            Console.WriteLine("Filename: {0}", file.ToString());
+        }
+    }
+
+    public Task<List<string>> GetFiles()
     {
         //ToDo: break this out into more methods for easier reading
         string vbFileName = "";
@@ -55,12 +71,12 @@ public class ProjectReaderService
                 .Select(item => item.Attribute("Include").Value)
                 .ToList();
             
-            return itemList;
+            return Task.FromResult(itemList);
         }
         catch (Exception ex)
         {
             Console.WriteLine("An error occurred: " + ex.Message);
-            return itemList;
+            return Task.FromResult(itemList);
         }
     }
 }

@@ -8,26 +8,32 @@ namespace HackathonConverter
     {
         private readonly ILogger<Worker> _logger;
         private readonly IArguments _arguments;
+        private readonly IProjectReader _service;
 
         public Worker(ILogger<Worker> logger, IArguments arguments)
         {
             _logger = logger;
             _arguments = arguments;
+            _service = new ProjectReaderService(_arguments);
             logger.LogDebug($"Path is the ------------ {arguments.Path} ---------------");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //todo: update while to be until all vikram tasks are done
-            //instead of while - my Task method here
-            //  - don't finish until Vikrams methods are done
-            while (!stoppingToken.IsCancellationRequested)
+            bool isProjectReaderDone = false;
+
+            while (!stoppingToken.IsCancellationRequested && !isProjectReaderDone)
             {
-               
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                
+
+                await _service.ProcessAsync(stoppingToken);
+                isProjectReaderDone = true;
+
                 await Task.Delay(6000000, stoppingToken);
             }
+
+            _logger.LogInformation("Worker stopped at: {time}", DateTimeOffset.Now);
+
         }
     }
 }
