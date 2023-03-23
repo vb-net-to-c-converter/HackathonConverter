@@ -8,4 +8,5 @@ namespace HackathonConverter.Services.Interfaces;
 public interface ICopyProjectService
 {
     void CopySourceProjectExcludingVbFiles();
+    string? GetNewBasePath();
 }

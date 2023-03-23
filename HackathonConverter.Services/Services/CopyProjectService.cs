@@ -23,6 +23,15 @@ public class CopyProjectService : ICopyProjectService
         CopyDirectory(_arguments.Path, targetFolder, true);
         RemoveVBSourceFiles(targetFolder);
     }
+
+    public string? GetNewBasePath()
+    {
+        var parentFolder = Directory.GetParent(_arguments.Path);
+        var targetFolder = Path.Combine(parentFolder.FullName, $"{new System.IO.DirectoryInfo(_arguments.Path).Name}_c#");
+        var dir = new DirectoryInfo(targetFolder);
+        return (!dir.Exists) ? null : targetFolder;
+        
+    }
     private void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
     {
         // Get information about the source directory
@@ -60,9 +69,13 @@ public class CopyProjectService : ICopyProjectService
 
     private void RemoveVBSourceFiles(string targetFolder)
     {
-        foreach (string file in Directory.EnumerateFiles(targetFolder, "*.vb", SearchOption.AllDirectories))
+        foreach (string file in Directory.EnumerateFiles(targetFolder, "*.vb*", SearchOption.AllDirectories))
         {
            File.Delete(file);
+        }
+        foreach (string file in Directory.EnumerateFiles(targetFolder, "*vbproj*.*", SearchOption.AllDirectories))
+        {
+            File.Delete(file);
         }
     }
 }
