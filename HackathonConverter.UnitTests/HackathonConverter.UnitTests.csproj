@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HackathonConverter.Services\HackathonConverter.Services.csproj" />
+    <ProjectReference Include="..\HackathonConverter\HackathonConverter.csproj" />
   </ItemGroup>
 
 </Project>

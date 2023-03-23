@@ -1,6 +1,10 @@
 global using HackathonConverter.Services.Interfaces;
 global using HackathonConverter.Services.Models;
 global using HackathonConverter.Services.Services;
+global using HackathonConverter.Services.Utils;
+global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Options;
 global using Moq;
+global using Refit;
+global using System.Text.Json;
 global using Xunit;
