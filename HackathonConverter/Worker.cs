@@ -18,16 +18,9 @@ namespace HackathonConverter
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            ProjectReaderService reader = new ProjectReaderService(_arguments);
-            List<string> files = reader.GetFiles();
-
-            foreach (string file in files)
-            {
-                _logger.LogInformation("Filename: {filename}", file.ToString());
-                //todo: vikram tasks here?
-            }
-
             //todo: update while to be until all vikram tasks are done
+            //instead of while - my Task method here
+            //  - don't finish until Vikrams methods are done
             while (!stoppingToken.IsCancellationRequested)
             {
                

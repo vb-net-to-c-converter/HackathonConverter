@@ -17,6 +17,8 @@ public class ProjectReaderService
         _FilePath = arguments.Path.ToString();
     }
 
+    
+
     public List<string> GetFiles()
     {
         //ToDo: break this out into more methods for easier reading
@@ -50,7 +52,7 @@ public class ProjectReaderService
 
             itemList = vbprojXml.Descendants(msbuild + "ItemGroup")
                 .Elements(msbuild + "Compile")
-                .Select(item => _FilePath + "\\" + item.Attribute("Include").Value)
+                .Select(item => item.Attribute("Include").Value)
                 .ToList();
             
             return itemList;
