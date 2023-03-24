@@ -1,5 +1,6 @@
 ﻿using HackathonConverter.Services.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Numerics;
 
 namespace HackathonConverter.Services.Services
 {
@@ -40,6 +41,30 @@ namespace HackathonConverter.Services.Services
             {
                 _logger.LogError(e.Message, "The file could not be read");
             }
+        }
+
+        public async Task ConvertProjectFile(string projectFileName)
+        {
+            var lines = @"< Project Sdk = ""Microsoft.NET.Sdk"" >
+
+              < PropertyGroup >
+                < TargetFramework > netstandard2.0 </ TargetFramework >
+              </ PropertyGroup >
+
+              < ItemGroup >
+                < PackageReference Include = ""Microsoft.Extensions.Logging.Abstractions"" Version = ""5.0.0"" />
+                < PackageReference Include = ""System.ServiceModel.Http"" Version = ""4.8.1"" />
+              </ ItemGroup >
+
+              < ItemGroup >
+                < Compile Include = ""**\*.cs"" />
+              </ ItemGroup >
+
+            </ Project >".Split("\n").ToList(); ;
+
+            await using StreamWriter outputFile = new StreamWriter(Path.ChangeExtension(Path.Combine(_copyProjectService.GetNewBasePath() ?? "", projectFileName), ".csproj"));
+            foreach (string line in lines)
+                await outputFile.WriteLineAsync(line);
         }
 
         private Task<List<string>> GetConverterCode(string vbList, CancellationToken cancellationToken)

@@ -19,41 +19,57 @@ public class ProjectReaderService : IProjectReader
         // Check the cancellation token before starting the operation
         stoppingToken.ThrowIfCancellationRequested();
 
-        var files = await GetFiles();
+        //Get the projectFileName
+        var projectFileName = GetProjectFileName();
+        
+        //Get all files within that project
+        var files = await GetFiles(projectFileName);
         var tasks = new List<Task>();
+
+        //Convert all the vb files
         foreach (var file in files)
         {
             tasks.Add(_processorService.ReadAndConvert(file, stoppingToken));
         }
+
+        //Convert the vbproj file
+        tasks.Add(_processorService.ConvertProjectFile(projectFileName));
+
         await Task.WhenAll(tasks);
     }
 
-    private Task<List<string>> GetFiles()
+    private string GetProjectFileName()
     {
-        //ToDo: break this out into more methods for easier reading
         var vbFileName = "";
+
+        // Get information about the source directory
+        var dir = new DirectoryInfo(_FilePath);
+
+        // Check if the source directory exists
+        if (!dir.Exists)
+            throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+        //get VBProject name
+        foreach (var file in dir.GetFiles())
+        {
+            if (file.Extension == ".vbproj")
+            {
+                //done an equals for now. Needs to append this probably
+                vbFileName = file.FullName;
+                break;
+            }
+        }
+
+        return vbFileName;
+    }
+
+    private Task<List<string>> GetFiles(string ProjectFileName)
+    {
+        var vbFileName = ProjectFileName;
         var itemList = new List<string>();
 
         try
         {
-            // Get information about the source directory
-            var dir = new DirectoryInfo(_FilePath);
-
-            // Check if the source directory exists
-            if (!dir.Exists)
-                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
-
-
-            //get VBProject name
-            foreach (var file in dir.GetFiles())
-            {
-                if (file.Extension == ".vbproj")
-                {
-                    //done an equals for now. Needs to append this probably
-                    vbFileName = file.FullName;
-                    break;
-                }
-            }
 
             //get all vb file names we need
             XNamespace msbuild = "http://schemas.microsoft.com/developer/msbuild/2003";
