@@ -45,22 +45,21 @@ namespace HackathonConverter.Services.Services
 
         public async Task ConvertProjectFile(string projectFileName)
         {
-            var lines = @"< Project Sdk = ""Microsoft.NET.Sdk"" >
+            var lines = @"<Project Sdk = ""Microsoft.NET.Sdk"">
+	<PropertyGroup>
+	<TargetFramework> netstandard2.0 </TargetFramework>
+</PropertyGroup>
 
-              < PropertyGroup >
-                < TargetFramework > netstandard2.0 </ TargetFramework >
-              </ PropertyGroup >
+<ItemGroup>
+	<PackageReference Include = ""Microsoft.Extensions.Logging.Abstraction"" Version = ""5.0.0"" />
+	<PackageReference Include = ""System.ServiceModel.Http"" Version = ""4.8.1"" />
+</ItemGroup>
 
-              < ItemGroup >
-                < PackageReference Include = ""Microsoft.Extensions.Logging.Abstractions"" Version = ""5.0.0"" />
-                < PackageReference Include = ""System.ServiceModel.Http"" Version = ""4.8.1"" />
-              </ ItemGroup >
+<ItemGroup>
+	<Compile Include = ""**\*.cs""/>
+</ItemGroup>
 
-              < ItemGroup >
-                < Compile Include = ""**\*.cs"" />
-              </ ItemGroup >
-
-            </ Project >".Split("\n").ToList(); ;
+</Project>".Split("\n").ToList(); ;
 
             await using StreamWriter outputFile = new StreamWriter(Path.ChangeExtension(Path.Combine(_copyProjectService.GetNewBasePath() ?? "", projectFileName), ".csproj"));
             foreach (string line in lines)
