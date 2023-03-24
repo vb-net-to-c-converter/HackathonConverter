@@ -69,6 +69,21 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PopularAlgirithms\CatalanNumberCalculator.vb" />
+    <Compile Include="PopularAlgirithms\FactorialCalculator.vb" />
+    <Compile Include="PopularAlgirithms\FibonacciCalculator.vb" />
+    <Compile Include="PopularAlgirithms\FibonacciLucasNumberCalculator.vb" />
+    <Compile Include="PopularAlgirithms\HarmonicNumberCalculator.vb" />
+    <Compile Include="Interfaces\ICatalanNumberCalculator.vb" />
+    <Compile Include="Interfaces\IFactorialCalculator.vb" />
+    <Compile Include="Interfaces\IFibonacciCalculator.vb" />
+    <Compile Include="Interfaces\IFibonacciLucasNumberCalculator.vb" />
+    <Compile Include="Interfaces\IHarmonicNumberCalculator.vb" />
+    <Compile Include="Interfaces\IPellNumberCalculator.vb" />
+    <Compile Include="Interfaces\IPentagonalNumberCalculator.vb" />
+    <Compile Include="Interfaces\IPrimeNumberCalculator.vb" />
+    <Compile Include="Interfaces\ISquareNumberCalculator.vb" />
+    <Compile Include="Interfaces\ITriangularNumberCalculator.vb" />
     <Compile Include="MainModule.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -85,6 +100,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="PopularAlgirithms\PellNumberCalculator.vb" />
+    <Compile Include="PopularAlgirithms\PentagonalNumberCalculator.vb" />
+    <Compile Include="PopularAlgirithms\PrimeNumberCalculator.vb" />
+    <Compile Include="PopularAlgirithms\SquareNumberCalculator.vb" />
+    <Compile Include="PopularAlgirithms\TriangularNumberCalculator.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -106,5 +126,6 @@
     </None>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
