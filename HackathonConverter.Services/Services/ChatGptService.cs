@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace HackathonConverter.Services.Services;
 
-public class ChatGptService
+public class ChatGptService : IChatGptService
 {
     private readonly ChatGPTSettings _settings;
     private readonly IChatGpt _chatGptClient;

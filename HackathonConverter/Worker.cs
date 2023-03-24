@@ -5,22 +5,22 @@ namespace HackathonConverter
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private readonly IProjectReader _projectReader;
+        private readonly ICopyProjectService _copyProjectService;
 
-
-        public Worker(ILogger<Worker> logger, ICopyProjectService copyProjectService)
+        public Worker(ILogger<Worker> logger, IProjectReader projectReader, ICopyProjectService copyProjectService)
         {
             _logger = logger;
-            copyProjectService.CopySourceProjectExcludingVbFiles();
+            _projectReader = projectReader;
+            _copyProjectService = copyProjectService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                
-                await Task.Delay(1000, stoppingToken);
-            }
+            _logger.LogInformation("Start converting");
+            _copyProjectService.CopySourceProjectExcludingVbFiles();
+            await _projectReader.ProcessAsync(stoppingToken);
+            _logger.LogInformation("Conversion complete, close the window");
         }
     }
 }

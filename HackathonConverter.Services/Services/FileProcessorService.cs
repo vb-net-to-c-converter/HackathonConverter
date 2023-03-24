@@ -1,108 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HackathonConverter.Services.Interfaces;
-using System.IO;
-using static System.Net.Mime.MediaTypeNames;
+﻿using HackathonConverter.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace HackathonConverter.Services.Services
 {
-    public static class FileProcessorService 
+    public class FileProcessorService : IFileProcessorService
     {
-        public static void ReadTextFromFile(string filePath)
+        private readonly IArguments _arguments;
+        private readonly ICopyProjectService _copyProjectService;
+        private readonly IChatGptService _chatGptService;
+        private readonly ILogger<FileProcessorService> _logger;
+
+        public FileProcessorService(IArguments arguments, ICopyProjectService copyProjectService, IChatGptService chatGptService, ILogger<FileProcessorService> logger)
+        {
+            _arguments = arguments;
+            _copyProjectService = copyProjectService;
+            _chatGptService = chatGptService;
+            _logger = logger;
+        }
+
+        public async Task ReadAndConvert(string filePath, CancellationToken cancellationToken)
         {
             try
             {
+                var fileName = Path.Combine(_arguments.Path, filePath);
+                
                 // Open the text file using a stream reader.
-                using (var sr = new StreamReader(filePath))
+                using (var sr = new StreamReader(fileName))
                 {
-
-                    
                     // Read the stream as a string, and write the string to the console.
-                    string text = sr.ReadToEnd();
+                    var text = await sr.ReadToEndAsync();
                     
-                    List<string> converterVbList = GetConverterVbList(text);
-                    foreach (string line in converterVbList)
-                    {
-                        Console.WriteLine(line);
-                    }
+                    var converterVbList = await GetConverterCode(text, cancellationToken);
+
                     //Save to c# file
-                    string fileName = "MainModule.cs";
-                    string folderPath = "C:\\ILSource\\HackathonConverter\\Speciment";
-                    SaveToFile(converterVbList, fileName, folderPath);
+                    await SaveToFile(converterVbList, filePath);
                 }
             }
             catch (IOException e)
             {
-                Console.WriteLine("The file could not be read:");
-                Console.WriteLine(e.Message);
+                _logger.LogError(e.Message, "The file could not be read");
             }
         }
-        public static List<string> GetConverterVbList(string vbList)
+
+        private Task<List<string>> GetConverterCode(string vbList, CancellationToken cancellationToken)
         {
-            List<string> converterVbList = new List<string>();
-
-            string[] lines = vbList.Split("\n");
-
-            foreach (string line in lines)
-            {
-                if (! string.IsNullOrWhiteSpace(line))
-                {
-                    converterVbList.Add(line);
-                }
-                
-            }
-            return converterVbList;
+            var lines = vbList.Split("\n").ToList();
+            return _chatGptService.ExecuteAsync(lines, cancellationToken);
         }
 
-        public static void ConverterVBtoC(string lineToConverter)
-        {
-            Console.WriteLine(lineToConverter);
-        }
-
-        public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive) 
-        {
-            // Get information about the source directory
-            var dir = new DirectoryInfo(sourceDir);
-
-            // Check if the source directory exists
-            if (!dir.Exists)
-                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
-
-            // Cache directories before we start copying
-            DirectoryInfo[] dirs = dir.GetDirectories();
-
-            // Create the destination directory
-            Directory.CreateDirectory(destinationDir);
-
-            // Get the files in the source directory and copy to the destination directory
-            foreach (FileInfo file in dir.GetFiles())
-            {
-                string targetFilePath = Path.Combine(destinationDir, file.Name);
-                file.CopyTo(targetFilePath);
-            }
-
-            // If recursive and copying subdirectories, recursively call this method
-            if (recursive)
-            {
-                foreach (DirectoryInfo subDir in dirs)
-                {
-                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
-                    CopyDirectory(subDir.FullName, newDestinationDir, true);
-                }
-            }
-        }
-
-        public static void SaveToFile(List<string> fileDataList, string fileName,string folderPath)
+        private async Task SaveToFile(List<string> fileDataList, string fileName)
         {
             // Write the string array to a new file 
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(folderPath, fileName)))
-            {
-                foreach (string line in fileDataList)
-                    outputFile.WriteLine(line);
-            }
+            await using StreamWriter outputFile = new StreamWriter(Path.ChangeExtension(Path.Combine(_copyProjectService.GetNewBasePath()??"",fileName), ".cs"));
+            foreach (string line in fileDataList)
+                await outputFile.WriteLineAsync(line);
+
+            await outputFile.FlushAsync();
         }
 
     }

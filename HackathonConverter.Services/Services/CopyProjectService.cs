@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HackathonConverter.Services.Interfaces;
+﻿using HackathonConverter.Services.Interfaces;
 
 namespace HackathonConverter.Services.Services;
 
@@ -18,18 +12,19 @@ public class CopyProjectService : ICopyProjectService
     }
     public void CopySourceProjectExcludingVbFiles()
     {
-        var parentFolder = Directory.GetParent(_arguments.Path);
-        var targetFolder = Path.Combine(parentFolder.FullName,$"{new System.IO.DirectoryInfo(_arguments.Path).Name}_c#");
+        var parentFolder = Directory.GetParent(_arguments.Path)!;
+        var targetFolder = Path.Combine(parentFolder.FullName,$"{new DirectoryInfo(_arguments.Path).Name}_c#");
         CopyDirectory(_arguments.Path, targetFolder, true);
-        RemoveVBSourceFiles(targetFolder);
+        RemoveVBSourceFiles(targetFolder, "*.vb*");
+        RemoveVBSourceFiles(targetFolder, "*vbproj*.*");
     }
 
     public string? GetNewBasePath()
     {
-        var parentFolder = Directory.GetParent(_arguments.Path);
-        var targetFolder = Path.Combine(parentFolder.FullName, $"{new System.IO.DirectoryInfo(_arguments.Path).Name}_c#");
+        var parentFolder = Directory.GetParent(_arguments.Path)!;
+        var targetFolder = Path.Combine(parentFolder.FullName, $"{new DirectoryInfo(_arguments.Path).Name}_c#");
         var dir = new DirectoryInfo(targetFolder);
-        return (!dir.Exists) ? null : targetFolder;
+        return !dir.Exists ? null : targetFolder;
         
     }
     private void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
@@ -67,15 +62,11 @@ public class CopyProjectService : ICopyProjectService
             }
     }
 
-    private void RemoveVBSourceFiles(string targetFolder)
+    private void RemoveVBSourceFiles(string targetFolder, string pattern)
     {
-        foreach (string file in Directory.EnumerateFiles(targetFolder, "*.vb*", SearchOption.AllDirectories))
+        foreach (string file in Directory.EnumerateFiles(targetFolder, pattern, SearchOption.AllDirectories))
         {
            File.Delete(file);
-        }
-        foreach (string file in Directory.EnumerateFiles(targetFolder, "*vbproj*.*", SearchOption.AllDirectories))
-        {
-            File.Delete(file);
         }
     }
 }

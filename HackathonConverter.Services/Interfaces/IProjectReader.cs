@@ -2,8 +2,6 @@
 {
     public interface IProjectReader
     {
-        public Task ProcessAsync(CancellationToken stoppingToken);
-        public Task<List<string>> GetFiles();
-
+        Task ProcessAsync(CancellationToken stoppingToken);
     }
 }
