@@ -23,23 +23,29 @@ namespace HackathonConverter.Services.Services
         {
             try
             {
+                _logger.LogInformation($"Start process file {filePath}");
                 var fileName = Path.Combine(_arguments.Path, filePath);
-                
+
                 // Open the text file using a stream reader.
                 using (var sr = new StreamReader(fileName))
                 {
                     // Read the stream as a string, and write the string to the console.
                     var text = await sr.ReadToEndAsync();
-                    
+
                     var converterVbList = await GetConverterCode(text, cancellationToken);
 
                     //Save to c# file
                     await SaveToFile(converterVbList, filePath);
                 }
+                _logger.LogInformation($"End process file {filePath}");
             }
             catch (IOException e)
             {
-                _logger.LogError(e.Message, "The file could not be read");
+                _logger.LogError(e.Message, $"The file could not be read {filePath}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, $"Error in processing file {filePath}");
             }
         }
 
